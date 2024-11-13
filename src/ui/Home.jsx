@@ -1,7 +1,15 @@
+import { useSelector } from "react-redux";
 import CreateUser from "../features/user/CreateUser";
+import LinkButton from "./LinkButton";
 
 
 function Home() {
+
+  const username = useSelector((state) => {
+    return state.user.username;
+  }); 
+
+
   return (
     <div className="my-10 text-center sm:my-16">
       <h1 className="font-semibold text-xl mb-8 md:text-3xl">
@@ -10,7 +18,7 @@ function Home() {
         <span className="text-yellow-500">Straight out of the oven, straight to you.</span>
       </h1>
  
-      <CreateUser />
+      {(username === "")?(<CreateUser />):(<LinkButton to={"/menu"}>Conitnue Ordering, {username}</LinkButton>)}
 
     </div>
   );

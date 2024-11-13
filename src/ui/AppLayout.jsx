@@ -18,7 +18,7 @@ const AppLayout = () => {
   return (
     <div className="layout h-screen grid  grid-rows-[auto_1fr_auto]">
 
-      <Loader />
+      {isLoading && <Loader />}
 
       <Header />
       <div className="overflow-auto">

@@ -1,5 +1,6 @@
 // Test ID: IIDSAT
 
+import { useLoaderData } from "react-router-dom";
 import { getOrder } from "../../services/apiRestaurant";
 import {
   calcMinutesLeft,
@@ -13,6 +14,7 @@ const order = {
   phone: "123456789",
   address: "Arroios, Lisbon , Portugal",
   priority: true,
+  status : "preparing",
   estimatedDelivery: "2027-04-25T10:00:00",
   cart: [
     {
@@ -52,32 +54,61 @@ function Order() {
     orderPrice,
     estimatedDelivery,
     cart,
-  } = order;
+  } = useLoaderData()
 
 
   const deliveryIn = calcMinutesLeft(estimatedDelivery);
 
-  return (
-    <div>
-      <div>
-        <h2>Status</h2>
+  console.log(status)
 
-        <div>
-          {priority && <span>Priority</span>}
-          <span>{status} order</span>
+  return (
+    <div className="space-y-8 px-4 py-6">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-xl font-semibold">Order #{id} status</h2>
+
+        <div className="space-x-2">
+          {priority && (
+            <span className="rounded-full bg-red-500 px-3 py-1 text-sm font-semibold uppercase tracking-wide text-white">
+              Priority
+            </span>
+          )}
+
+          <span className="rounded-full bg-green-500 px-3 py-1 text-sm font-semibold uppercase tracking-wide text-white">
+            {status} order
+          </span>
         </div>
       </div>
 
-      <div>
-        <p>
+      <div className="flex flex-wrap items-center justify-between gap-2 bg-stone-200 px-6 py-5">
+        <p className="font-medium">
           {deliveryIn >= 0
             ? `Only ${calcMinutesLeft(estimatedDelivery)} minutes left 😃`
             : "Order should have arrived"}
         </p>
-        <p>(Estimated delivery: {formatDate(estimatedDelivery)})</p>
+        <p className="text-xs text-stone-500">(Estimated delivery: {formatDate(estimatedDelivery)})</p>
       </div>
 
-      <div>
+       <ul>
+      {cart.map((item) => {
+
+        return (
+          <li key={item.pizzaId} className="flex items-center justify-between px-6 py-5 border-b border-stone-200">
+            <div>
+              <h3 className="font-semibold">{item.name}</h3>
+              <p className="text-stone-500">Quantity: {item.quantity}</p>
+            </div>
+            <div>
+              <p>{formatCurrency(item.totalPrice)}</p>
+            </div>
+          </li>
+        );
+  
+
+      })}
+      </ul>
+
+
+      <div className="space-y-2 bg-stone-200 px-6 py-5">
         <p>Price pizza: {formatCurrency(orderPrice)}</p>
         {priority && <p>Price priority: {formatCurrency(priorityPrice)}</p>}
         <p>To pay on delivery: {formatCurrency(orderPrice + priorityPrice)}</p>
@@ -92,8 +123,10 @@ export const loader = async ({params}) => {
   
   const order = await getOrder(params.orderId)
 
-  return order
+  console.log(order)
 
+  return order
+  
 
 }
 
